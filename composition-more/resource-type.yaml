@@ -1,0 +1,10 @@
+apiVersion: example.org/v1alpha1 <=
+kind: MyDatabase <=
+metadata:
+  namespace: default
+  name: my-composite-resource
+spec:
+  crossplane:
+    compositionRef:
+      name: my-other-composition
+  # Removed for brevity
