@@ -1,9 +1,0 @@
-1: xrd (CompositeResourceDefinition)
-2: composition 
-3: xr (CompositeResource)
-
-
-Have docker installed since the crossplane CLI needs Docker to run functions
-
-
-

@@ -1,0 +1,13 @@
+apiVersion: soprasteria.local/v1alpha1
+kind: XNamespace
+metadata: 
+  name: my-namespace-xr  
+spec:
+  name: my-namespace
+  labels:
+    crossplane: great
+  annotations:
+    owner: me  
+  
+
+

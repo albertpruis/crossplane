@@ -1,0 +1,60 @@
+apiVersion: apiextensions.crossplane.io/v2  # fixed value
+kind: CompositeResourceDefinition # fixed value
+metadata:
+  name: pods.soprasteria.local
+spec: 
+  scope: Namespaced
+  group: soprasteria.local
+  names: 
+    kind: XPod
+    plural: pods
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    additionalPrinterColumns:
+    - name: Ready
+      type: string
+      jsonPath: .status.conditions[?(@.type=='Ready')].status
+    - name: Pod
+      type: string
+      jsonPath: .status.observedPod
+    - name: Age
+      type: date
+      jsonPath: .metadata.creationTimestamp     
+    schema: 
+      openAPIV3Schema:
+        type: object
+        properties: 
+          spec: 
+            type: object
+            properties:
+              name: 
+                type: string
+                description: "The name of the Pod"
+              namespace: 
+                type: string
+                description: "The namespace in which the Pod should be placed"
+              container0name: 
+                type: string
+                description: "The name of the first container"
+              container0image: 
+                type: string
+                description: "The image of the first container"
+              container0port:
+                type: integer
+                description: "The port on which the container receives traffic (optional)"                
+            required:
+              - name
+              - namespace
+              - container0name
+              - container0image
+        status: 
+          type: object
+          properties:
+            ready:
+              type: boolean
+              description: "Indicates whether the pod is ready"
+            observedPod:
+              type: string
+              description: "The name of the Pod in the cluster"

@@ -1,0 +1,46 @@
+apiVersion: apiextensions.crossplane.io/v1  # fixed value
+kind: Composition  # fixed value
+metadata:
+  name: XPod
+spec: 
+  compositeTypeRef:
+    apiVersion: soprasteria.local/v1alpha1
+    kind: XPod
+  mode: Pipeline
+  pipeline:
+  - step: patch-and-transform 
+    functionRef: 
+      name: function-patch-and-transform  
+    input:
+      apiVersion: pt.fn.crossplane.io/v1beta1 
+      kind: Resources 
+      resources: 
+      - name: pods
+        base: 
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: placeholder
+            namespace: placeholder
+          spec:
+            containers:
+            - name: placeholder
+              image: placeholder
+              ports:
+              - containerPort: 80
+        patches:
+          - type: FromCompositeFieldPath
+            fromFieldPath: spec.name
+            toFieldPath:  metadata.name       
+          - type: FromCompositeFieldPath
+            fromFieldPath: spec.namespace
+            toFieldPath: metadata.namespace 
+          - type: FromCompositeFieldPath
+            fromFieldPath: spec.container0name
+            toFieldPath:  spec.containers[0].name
+          - type: FromCompositeFieldPath
+            fromFieldPath: spec.container0image
+            toFieldPath: spec.containers[0].image 
+          - type: FromCompositeFieldPath
+            fromFieldPath: spec.container0port
+            toFieldPath: spec.containers[0].ports[0].containerPort     

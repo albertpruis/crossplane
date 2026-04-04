@@ -1,0 +1,37 @@
+apiVersion: apiextensions.crossplane.io/v1  # fixed value
+kind: Composition  # fixed value
+metadata:
+  name: xnamespace  # follows the singular kind of the xrd
+spec:
+  compositeTypeRef:
+    apiVersion:  soprasteria.local/v1alpha1   # combines the group and version of the xrd
+    kind: XNamespace  # this is the name of the singular kind of the xrd
+  mode: Pipeline # fixed value 
+  pipeline: 
+  - step: patch-and-transform  # free logical name for this step in the pipeline
+    functionRef: 
+      name: function-patch-and-transform  # the name of the function that is installed on the cluster
+    input:
+      apiVersion: pt.fn.crossplane.io/v1beta1 # fixed value
+      kind: Resources # the chosen function expects this value
+      resources: # the chosen function expects this value
+      - name: namespace     # logical name of the resource type 
+        base: 
+          apiVersion: v1    # this is part of the yaml you would create for a k8s namespace
+          kind: Namespace   # this is part of the yaml you would create for a k8s namespace  
+          metadata: {}      # this is part of the yaml you would create for a k8s namespace 
+        patches: 
+          - type: FromCompositeFieldPath
+            fromFieldPath: spec.name   # under .spec.properties in the xrd
+            toFieldPath: metadata.name   # this is what k8s namespace yaml expects
+          - type: FromCompositeFieldPath   
+            fromFieldPath: spec.labels     # under .spec.properties in the xrd
+            toFieldPath: metadata.labels    # this is what k8s namespace yaml expects
+            policy:   
+              fromFieldPath: Optional      # because in the xrd these are optional, not mandatory
+          - type: FromCompositeFieldPath   
+            fromFieldPath: spec.annotations # under .spec.properties in the xrd   
+            toFieldPath: metadata.annotations  # this is what k8s namespace yaml expects
+            policy:
+              fromFieldPath: Optional   # because in the xrd these are optional, not mandatory
+  
